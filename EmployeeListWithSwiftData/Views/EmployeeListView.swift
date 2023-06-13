@@ -68,8 +68,14 @@ struct EmployeeListView: View {
                                     .font(.caption)
                             }
                             Text("Salary Per Month: Rs. \(employee.salaryPerMonth)")
-                            Text(employee.createdAt, style: .time)
-                                .font(.caption)
+                            HStack(alignment: .top) {
+                                Text("Record Added on:")
+                                    .font(.caption)
+                                Text(employee.createdAt, style: .date)
+                                    .font(.caption)
+                                Text(employee.createdAt, style: .time)
+                                    .font(.caption)
+                            }
                             
                         }
                     }
