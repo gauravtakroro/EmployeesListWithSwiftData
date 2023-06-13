@@ -65,7 +65,6 @@ struct EmployeeListView: View {
                             Text(employee.name)
                             if employee.departments.count > 0 {
                                 Text("Department:" + employee.departments.map { $0.name }.joined(separator: ", "))
-                                    .font(.caption)
                             }
                             Text("Salary Per Month: Rs. \(employee.salaryPerMonth)")
                             HStack(alignment: .top) {
