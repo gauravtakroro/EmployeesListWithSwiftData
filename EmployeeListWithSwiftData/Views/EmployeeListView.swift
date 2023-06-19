@@ -17,6 +17,11 @@ struct EmployeeListView: View {
     @State var employeeText = ""
     @State var salaryPerMonthText = ""
     
+    @State private var showAlert = false
+    @State private var updatedEmployeeName = ""
+    @State private var updatedEmployeeSalary = ""
+    @State private var selectedEmployee: Employee?
+    
     var body: some View {
         List {
             Section {
@@ -75,14 +80,45 @@ struct EmployeeListView: View {
                                 Text(employee.createdAt, style: .time)
                                     .font(.caption)
                             }
+                        }.swipeActions {
+                            Button("Delete", role: .destructive, action: {
+                                context.delete(employee)
+                                try? context.save()
+                            })
                             
+                            Button("Update", role: .none, action: {
+                                selectedEmployee = employee
+                                updatedEmployeeName = employee.name
+                                updatedEmployeeSalary = "\(employee.salaryPerMonth)"
+                                withAnimation {
+                                    showAlert.toggle()
+                                }
+                            })
                         }
                     }
-                    .onDelete { indexSet in
+                    // this is not needed anymore, because it  has been added as  SwipeActions
+                    /*.onDelete { indexSet in
                         indexSet.forEach { index in
                             context.delete(allEmployees[index])
                         }
                         try? context.save()
+                    }*/
+                    .alert("Update employee Record" , isPresented: $showAlert) {
+                        
+                        Section {
+                            TextField("Enter name", text: $updatedEmployeeName, axis: .vertical)
+                                .lineLimit(1)
+                            TextField("Enter Salary Per Month", text: $updatedEmployeeSalary, axis: .vertical)
+                                .lineLimit(1).keyboardType(.numberPad)
+                            
+                            Button("Update") {
+                                updateEmployee()
+                                showAlert = false
+                            }
+                            Button("Cancel", role: .cancel, action: {
+                                showAlert = false
+                            })
+                        }
                     }
                 }
             }
@@ -103,6 +139,11 @@ struct EmployeeListView: View {
         try? context.save()
         employeeText = ""
         salaryPerMonthText = ""
+    }
+    
+    func updateEmployee() {
+        selectedEmployee?.name = updatedEmployeeName
+        selectedEmployee?.salaryPerMonth = Int64(updatedEmployeeSalary) ?? 0
     }
 }
 
